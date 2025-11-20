@@ -69,38 +69,41 @@
     <a href="products.html">
   <button>View Our Products</button>
 </a>
+<form id="commentForm">
+  <label>Name:</label>
+  <input type="text" name="user_name" required />
 
-// components/Comments.tsx
-'use client';
-import { useEffect } from 'react';
+  <label>Comment:</label>
+  <textarea name="message" required></textarea>
 
-export default function Comments() {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://utteranc.es/client.js';
-    script.async = true;
-    script.crossOrigin = 'anonymous';
-    script.setAttribute('repo', 'your-username/your-repo');
-    script.setAttribute('issue-term', 'pathname');
-    script.setAttribute('theme', 'github-light');
-    const el = document.getElementById('comments');
-    el?.appendChild(script);
-  }, []);
+  <button type="submit">Send</button>
+</form>
 
-  return <section id="comments" />;
-}
-// app/page.tsx (Next.js 13+)
-import Comments from '@/components/Comments';
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+  (function(){
+    emailjs.init("YOUR_PUBLIC_KEY"); // from EmailJS dashboard
+  })();
 
-export default function Home() {
-  return (
-    <main>
-      <h1>My Vercel App</h1>
-      <Comments />
-    </main>
-  );
-}
+  document.getElementById("commentForm").addEventListener("submit", function(e) {
+    e.preventDefault();
 
+    emailjs.sendForm("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", this)
+      .then(() => {
+        alert("Comment sent!");
+      }, (err) => {
+        alert("Error: " + JSON.stringify(err));
+      });
+  });
+</script>
+<script>
+  // Navigation link highlighting
+  const links = document.querySelectorAll('nav a');
+  links.forEach(link => {
+    if (link.href === window.location.href) {
+      link.style.textDecoration = 'underline';
+    }
+  });
 
 </script>
 </body>
