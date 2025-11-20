@@ -69,41 +69,44 @@
     <a href="products.html">
   <button>View Our Products</button>
 </a>
-<form id="commentForm">
-  <label>Name:</label>
-  <input type="text" name="user_name" required />
+// components/CommentForm.tsx
+import { useRef } from 'react';
+import emailjs from '@emailjs/browser';
 
-  <label>Comment:</label>
-  <textarea name="message" required></textarea>
+export default function CommentForm() {
+  const form = useRef<HTMLFormElement>(null);
 
-  <button type="submit">Send</button>
-</form>
-
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-  (function(){
-    emailjs.init("YOUR_PUBLIC_KEY"); // from EmailJS dashboard
-  })();
-
-  document.getElementById("commentForm").addEventListener("submit", function(e) {
+  const sendEmail = (e: React.FormEvent) => {
     e.preventDefault();
 
-    emailjs.sendForm("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", this)
-      .then(() => {
-        alert("Comment sent!");
-      }, (err) => {
-        alert("Error: " + JSON.stringify(err));
-      });
-  });
-</script>
-<script>
-  // Navigation link highlighting
-  const links = document.querySelectorAll('nav a');
-  links.forEach(link => {
-    if (link.href === window.location.href) {
-      link.style.textDecoration = 'underline';
-    }
-  });
+    if (!form.current) return;
+
+    emailjs.sendForm(
+      'YOUR_SERVICE_ID',
+      'YOUR_TEMPLATE_ID',
+      form.current,
+      'YOUR_PUBLIC_KEY'
+    ).then(() => {
+      alert('Comment sent!');
+      form.current?.reset();
+    }).catch((err) => {
+      alert('Failed to send: ' + err.text);
+    });
+  };
+
+  return (
+    <form ref={form} onSubmit={sendEmail}>
+      <label>Name:</label>
+      <input type="text" name="user_name" required />
+
+      <label>Comment:</label>
+      <textarea name="message" required />
+
+      <button type="submit">Send</button>
+    </form>
+  );
+}
+
 
 </script>
 </body>
